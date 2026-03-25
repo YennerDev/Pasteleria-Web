@@ -13,9 +13,9 @@ async function cargarProductos() {
   productos.forEach(p => {
 
     // 🔥 Detectar si es URL o imagen local
-    const rutaImagen = p.imagen.startsWith("http")
-      ? p.imagen
-      : `/images/${p.imagen}`;
+const rutaImagen = p.imagen.startsWith("http")
+  ? p.imagen
+  : `/img/${p.imagen}`;
 
     const fila = `
       <tr>

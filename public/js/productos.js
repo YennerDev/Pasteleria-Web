@@ -1,41 +1,41 @@
-async function cargarProductos() {
-  try {
-    const response = await fetch("/api/productos");
-    const productos = await response.json();
+const contenedor = document.getElementById("productos-container");
 
-    const contenedor = document.getElementById("productos-container");
-    contenedor.innerHTML = "";
+// 🔥 Traer productos guardados
+let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
-    productos.forEach(producto => {
-
-      const card = `
-      <div class="producto">
-        <img src="${producto.imagen}" width="200">
-        <h3>${producto.nombre}</h3>
-        <p>S/ ${producto.precio}</p>
-
-        <button onclick="pedirProducto('${producto.nombre}')">
-        Pedir
-        </button>
-
-      </div>
-      `;
-
-      contenedor.innerHTML += card;
-
-    });
-
-  } catch (error) {
-    console.error("Error cargando productos:", error);
+// 🔥 PRODUCTOS FIJOS (para que siempre haya contenido)
+const productosFijos = [
+  {
+    nombre: "Torta Infantil",
+    precio: 80,
+    imagen: "torta_infantil.jpg"
+  },
+  {
+    nombre: "Torta de Chocolate",
+    precio: 60,
+    imagen: "torta_chocolate.jpg"
   }
-}
+];
 
-function pedirProducto(nombre){
+// 🔥 UNIR ambos
+const todosLosProductos = [...productosFijos, ...productos];
 
-  localStorage.setItem("productoSeleccionado", nombre);
+// 🔥 MOSTRAR
+todosLosProductos.forEach(p => {
 
-  window.location.href = "pedidos.html";
+  const rutaImagen = p.imagen.startsWith("http")
+    ? p.imagen
+    : `/img/${p.imagen}`;
 
-}
+  const card = `
+    <div class="producto">
+      <img src="${rutaImagen}" alt="${p.nombre}">
+      <h3>${p.nombre}</h3>
+      <p>S/ ${p.precio}</p>
+      <button>Pedido</button>
+    </div>
+  `;
 
-cargarProductos();
+  contenedor.innerHTML += card;
+
+});

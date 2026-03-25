@@ -1,78 +1,89 @@
-// admin.js modificado para portafolio sin backend
+// admin.js corregido para que el botón "Agregar producto" funcione
 
 const tabla = document.getElementById("tabla-productos");
 const form = document.querySelector(".form-producto");
 
-// Array de productos dinámicos
-let productos = [];
+const API = "/api/productos";
 
-// Cargar productos desde localStorage al iniciar
-if (localStorage.getItem("productos")) {
-  productos = JSON.parse(localStorage.getItem("productos"));
-  actualizarTabla();
+// Cargar productos desde la API y mostrar en la tabla
+async function cargarProductos() {
+  try {
+    const res = await fetch(API);
+    const productos = await res.json();
+
+    tabla.innerHTML = "";
+
+    productos.forEach(p => {
+      // Detectar si es URL o ruta local
+      const rutaImagen = p.imagen.startsWith("http")
+        ? p.imagen
+        : `/images/${p.imagen}`;
+
+      const fila = `
+        <tr>
+          <td><img src="${rutaImagen}" width="80"></td>
+          <td>${p.nombre}</td>
+          <td>S/ ${p.precio}</td>
+          <td>
+            <button onclick="eliminarProducto(${p.id})">Eliminar</button>
+          </td>
+        </tr>
+      `;
+      tabla.innerHTML += fila;
+    });
+
+  } catch (error) {
+    console.error("Error cargando productos:", error);
+  }
 }
 
-// Escuchar el submit del formulario
+// Manejar submit del formulario
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const formData = new FormData();
+
   const nombre = form.nombre.value;
   const precio = form.precio.value;
-  const fileInput = form.imagen;
 
-  if (fileInput.files.length === 0) {
+  const fileInput = form.imagen; // Debe coincidir con name="imagen"
+
+  formData.append("nombre", nombre);
+  formData.append("precio", precio);
+
+  // Adjuntar imagen si se seleccionó un archivo
+  if (fileInput.files.length > 0) {
+    formData.append("imagen", fileInput.files[0]);
+  } else {
     alert("Selecciona una imagen para el producto");
     return;
   }
 
-  const archivo = fileInput.files[0];
-  const reader = new FileReader();
+  try {
+    await fetch(API, {
+      method: "POST",
+      body: formData
+    });
 
-  reader.onload = function () {
-    const imagenBase64 = reader.result;
-
-    const nuevoProducto = {
-      id: Date.now(), // id único
-      nombre,
-      precio,
-      imagen: imagenBase64
-    };
-
-    productos.push(nuevoProducto);
-
-    // Guardar en localStorage
-    localStorage.setItem("productos", JSON.stringify(productos));
-
-    // Actualizar tabla
-    actualizarTabla();
-
-    // Limpiar formulario
     form.reset();
-  };
+    cargarProductos();
 
-  reader.readAsDataURL(archivo);
+  } catch (error) {
+    console.error("Error agregando producto:", error);
+  }
 });
 
-// Función para actualizar la tabla de productos
-function actualizarTabla() {
-  tabla.innerHTML = "";
-
-  productos.forEach((p) => {
-    const fila = `
-      <tr>
-        <td><img src="${p.imagen}" width="80"></td>
-        <td>${p.nombre}</td>
-        <td>S/ ${p.precio}</td>
-        <td><button onclick="eliminarProducto(${p.id})">Eliminar</button></td>
-      </tr>
-    `;
-    tabla.innerHTML += fila;
-  });
-}
-
 // Función para eliminar producto
-function eliminarProducto(id) {
-  productos = productos.filter(p => p.id !== id);
-  localStorage.setItem("productos", JSON.stringify(productos));
-  actualizarTabla();
+async function eliminarProducto(id) {
+  try {
+    await fetch(`${API}/${id}`, {
+      method: "DELETE"
+    });
+    cargarProductos();
+  } catch (error) {
+    console.error("Error eliminando producto:", error);
+  }
 }
+
+// Cargar productos al iniciar
+cargarProductos();

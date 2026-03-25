@@ -1,39 +1,47 @@
-// productos.js para mostrar dinámicos + fijos
+
+// 🔥 Traer productos guardados
+let productos = JSON.parse(localStorage.getItem("productos")) || [];
 async function cargarProductos() {
-  try {
-    // Traer productos dinámicos desde backend
-    const res = await fetch("/api/productos");
-    const productosDinamicos = await res.json();
+try {
+const response = await fetch("/api/productos");
+const productos = await response.json();
 
-    const contenedor = document.getElementById("productos-container");
-    contenedor.innerHTML = ""; // limpiar contenedor
+const contenedor = document.getElementById("productos-container");
 
-    // Crear tarjetas para cada producto dinámico
-    productosDinamicos.forEach(producto => {
-      // Ruta de imagen
-      const rutaImagen = producto.imagen.startsWith("http")
-        ? producto.imagen
-        : `/images/${producto.imagen}`;
+// 🔥 Limpia SOLO los dinámicos (no afecta los fijos)
+contenedor.innerHTML = "";
 
-      const card = `
-      <div class="producto">
-        <img src="${rutaImagen}" width="200">
-        <h3>${producto.nombre}</h3>
-        <p>S/ ${producto.precio}</p>
-        <button onclick="pedirProducto('${producto.nombre}')">Pedir</button>
-      </div>
-      `;
-      contenedor.innerHTML += card;
-    });
+productos.forEach(producto => {
 
-  } catch (error) {
-    console.error("Error cargando productos:", error);
-  }
+  // 🔥 Corrige la ruta de la imagen
+  const rutaImagen = producto.imagen.startsWith("http")
+    ? producto.imagen
+    : `/img/${producto.imagen}`;
+
+  const card = `
+  <div class="producto">
+    <img src="${rutaImagen}" width="200">
+    <h3>${producto.nombre}</h3>
+    <p>S/ ${producto.precio}</p>
+
+    <button onclick="pedirProducto('${producto.nombre}')">
+      Pedir
+    </button>
+  </div>
+  `;
+
+  contenedor.innerHTML += card;
+
+});
+
+} catch (error) {
+console.error("Error cargando productos:", error);
+}
 }
 
-function pedirProducto(nombre) {
-  localStorage.setItem("productoSeleccionado", nombre);
-  window.location.href = "pedidos.html";
+function pedirProducto(nombre){
+localStorage.setItem("productoSeleccionado", nombre);
+window.location.href = "pedidos.html";
 }
 
 cargarProductos();

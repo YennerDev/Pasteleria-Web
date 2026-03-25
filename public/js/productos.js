@@ -1,6 +1,5 @@
 
-// 🔥 Traer productos guardados
-let productos = JSON.parse(localStorage.getItem("productos")) || [];
+
 async function cargarProductos() {
 try {
 const response = await fetch("/api/productos");

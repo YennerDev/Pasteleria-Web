@@ -4,7 +4,7 @@ async function cargarProductos() {
     const productos = await response.json();
 
     const contenedor = document.getElementById("productos-container");
-    contenedor.innerHTML = "";
+    //contenedor.innerHTML = "";
 
     productos.forEach(producto => {
 

@@ -12,11 +12,16 @@ async function cargarProductos() {
 
   productos.forEach(p => {
 
+    // 🔥 Detectar si es URL o imagen local
+    const rutaImagen = p.imagen.startsWith("http")
+      ? p.imagen
+      : `/images/${p.imagen}`;
+
     const fila = `
       <tr>
 
         <td>
-          <img src="/images/${p.imagen}" width="80">
+          <img src="${rutaImagen}" width="80">
         </td>
 
         <td>${p.nombre}</td>
@@ -43,21 +48,40 @@ form.addEventListener("submit", async (e) => {
 
   e.preventDefault();
 
-  const formData = new FormData(form);
+  const formData = new FormData();
+
+  const nombre = form.nombre.value;
+  const precio = form.precio.value;
+
+  const fileInput = form.imagenArchivo;
+  const urlInput = form.imagenURL;
+
+  formData.append("nombre", nombre);
+  formData.append("precio", precio);
+
+  // 🔥 LÓGICA MIXTA
+  if (fileInput.files.length > 0) {
+    // 👉 archivo (temporal en Render)
+    formData.append("imagen", fileInput.files[0]);
+  } else {
+    // 👉 URL (persistente)
+    formData.append("imagenURL", urlInput.value);
+  }
 
   await fetch(API, {
-
     method: "POST",
-
     body: formData
-
   });
 
   form.reset();
-
   cargarProductos();
 
 });
+
+
+function limpiarFormulario() {
+  form.reset();
+}
 
 
 async function eliminarProducto(id) {

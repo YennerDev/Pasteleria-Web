@@ -31,19 +31,25 @@
 
 <h1>Panel Administrador</h1>
 
-<h2>Agregar Producto</h2>
+<h2>Agregar Producto (Demo)</h2>
 
-<!-- IMPORTANTE enctype -->
-<form class="form-producto" id="formProducto" enctype="multipart/form-data">
+<form class="form-producto" id="formProducto">
 
 <input type="text" name="nombre" placeholder="Nombre del producto" required>
 
 <input type="number" name="precio" placeholder="Precio" required>
 
-<!-- CAMBIAMOS URL POR FILE -->
-<input type="file" name="imagen" accept="image/*" required>
+<!-- 🔥 OPCIÓN 1: SUBIR IMAGEN (temporal) -->
+<input type="file" name="img/pastel11.jpg" accept="image/*">
 
-<button type="submit">Agregar producto</button>
+<input type="file" name="img/pastel12.jpg" accept="image/*">
+<p style="font-size:12px; color:gray;">
+*Demo: las imágenes subidas pueden ser temporales en este entorno.
+</p>
+
+<!-- 🔥 BOTONES -->
+<button type="submit">Guardar producto</button>
+<button type="button" onclick="limpiarFormulario()">Limpiar</button>
 
 </form>
 

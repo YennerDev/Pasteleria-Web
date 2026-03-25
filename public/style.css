@@ -320,8 +320,13 @@ background:#8b0000;
 }
 /* ===== Footer ===== */
 footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: #c53030;
+  width: 100%;                 /* asegurar que ocupe todo el ancho */
+  background-color: #c53030;   /* rojo peruano consistente */
   color: white;
+  text-align: center;
+  padding: 20px 0;             /* más espacio arriba y abajo */
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  box-sizing: border-box;      /* para que padding no afecte ancho */
+  margin-top: 40px;            /* separación de los productos */
 }
